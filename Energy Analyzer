@@ -1,0 +1,35 @@
+import csv
+import math
+
+def read_energy_data(filename):
+    data = []
+    with open(filename, 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            data.append(float(row['consumption']))
+    return data
+
+def calculate_mean(data):
+    return sum(data) / len(data)
+
+def calculate_std(data, mean):
+    variance = sum((x - mean) ** 2 for x in data) / len(data)
+    return math.sqrt(variance)
+
+def detect_anomalies(data, mean, std):
+    threshold = mean + 2 * std
+    anomalies = [x for x in data if x > threshold]
+    return anomalies
+
+if __name__ == "__main__":
+    filename = "energy_data.csv"
+    data = read_energy_data(filename)
+
+    mean = calculate_mean(data)
+    std = calculate_std(data, mean)
+    anomalies = detect_anomalies(data, mean, std)
+
+    print("Media consumo:", round(mean, 2))
+    print("Deviazione standard:", round(std, 2))
+    print("Soglia anomalia:", round(mean + 2 * std, 2))
+    print("Picchi rilevati:", anomalies)
